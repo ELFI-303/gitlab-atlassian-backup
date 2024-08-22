@@ -1,0 +1,13 @@
+image: python:3.12-alpine3.19
+variables:
+  PYTHONUNBUFFERED: "1"
+before_script:
+  - python -V
+build:
+  image: python:3.12-alpine3.19
+  script:
+    - python3 -m venv backup-env
+    - source backup-env/bin/activate
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install -r requirements.txt
+    - python -u backup-script.py
