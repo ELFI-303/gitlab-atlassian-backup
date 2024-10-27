@@ -17,7 +17,7 @@ def progressBar(dl,name):
 def conf_backup(account, basic, az_url):
     # Create the full base url for the JIRA instance using the account name.
     url = 'https://' + account + '.atlassian.net/wiki'
-    # Open new session for cookie persistence and auth.
+    # Open new session auth.
     session = requests.Session()
     session.headers.update({"Accept": "application/json", "Content-Type": "application/json",  "Authorization": "Basic "+basic})
     #Start the backup for confluence
@@ -47,15 +47,10 @@ def conf_backup(account, basic, az_url):
         date = time.strftime("%d-%b-%Y")
         filename = "confluence-export("+date+").zip"
         try:
-            print("-")
             sfc = ShareFileClient.from_connection_string(conn_str=az_url,share_name="prod-eu-w-confluencecloud-backups",file_path=filename)
-            print("0")
             files = session.get(url + '/download/' + file_name, stream=True)
-            print("1")
             files.raise_for_status()
-            print("2")
             with open(files.content) as handle:
-                print("3")
                 sfc.upload_file(bytes(handle),length=sys.getsizeof(handle) )
             print("The Confluence backup have succesfully been uploaded to Azure.", flush=True)
         except:
@@ -133,11 +128,7 @@ def main():
 
     t1.join()
     t2.join()
-
-    #jira_backup(site, basic, az_url)
-
-    #conf_backup(site, basic, az_url)
-
+    
     if datetime.datetime.today().weekday() != 3:
         print("Backups get upload only on Friday's, this backup won't be uploaded on Azure !")
 
